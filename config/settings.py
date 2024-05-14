@@ -1,4 +1,4 @@
-import os, django
+import os
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -11,12 +11,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-gl)r(7!cpn2rdw_68kquo15u7^uln8##zxxve7058b84iw(y8^'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = []
+
 
 # Application definition
 
@@ -95,14 +96,13 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
+
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny'
     ],
 }
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
-django.setup()
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/

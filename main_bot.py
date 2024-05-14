@@ -2,12 +2,15 @@ import asyncio
 import logging
 import sys
 
+import django
+
 from aiogram import Dispatcher, Bot
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
-
 from bot.handlers import router
 from config.settings import TELEGRAM_TOKEN
+
+django.setup()
 
 dp = Dispatcher()
 bot = Bot(TELEGRAM_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))

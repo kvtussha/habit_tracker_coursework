@@ -1,4 +1,4 @@
-from rest_framework import generics
+from rest_framework import viewsets, generics
 
 from habit.models import Habit
 from habit.paginators import HabitPaginator
