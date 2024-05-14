@@ -8,8 +8,9 @@ class Command(BaseCommand):
         user = User.objects.create(
             username='admin_katyssha',
             phone='79603023345',
-            bot_id=5121595163,
+            bot_id=5121595153,
+            is_superuser=True,
+            is_staff=True
         )
-        user.set_password('admin!#601^?')
-        user.is_active = True
+        user.set_password('admin!#601^????')
         user.save()

@@ -1,8 +1,9 @@
-from rest_framework import viewsets, generics
-
+from rest_framework import generics
+from asgiref.sync import sync_to_async
 from habit.models import Habit
 from habit.paginators import HabitPaginator
 from habit.serializers import HabitSerializer
+from django.apps import apps
 
 
 class HabitListAPIView(generics.ListAPIView):
@@ -10,8 +11,11 @@ class HabitListAPIView(generics.ListAPIView):
     queryset = Habit.objects.all()
     pagination_class = HabitPaginator
 
-    def get_habits(self):
-        return list(self.queryset)
+    @staticmethod
+    @sync_to_async
+    def get_all_habits():
+        habit = apps.get_model('habit', 'Habit')
+        return list(habit.objects.all())
 
 
 class HabitCreateAPIView(generics.CreateAPIView):

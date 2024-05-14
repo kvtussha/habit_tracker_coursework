@@ -1,15 +1,18 @@
+import os
+
+import django
+from django.conf import settings
+
 import asyncio
 import logging
 import sys
-
-import django
-
 from aiogram import Dispatcher, Bot
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from bot.handlers import router
 from config.settings import TELEGRAM_TOKEN
 
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 django.setup()
 
 dp = Dispatcher()

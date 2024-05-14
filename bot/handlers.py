@@ -5,7 +5,7 @@ import bot.keyboards as kb
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 
-from habit.views import HabitViewSet
+from bot.utils import get_habits
 
 router = Router()
 
@@ -48,10 +48,13 @@ async def command_start_handler(message: Message) -> None:
     await message.answer(text, reply_markup=kb.main)
 
 
-@router.message(F.text == 'Посмотреть все привычки')
+@router.message(F.text == 'Посмотреть привычки')
 async def all_habits(message: Message) -> None:
     text = 'Ваши привычки 💫:\n'
-    habits = await HabitViewSet().get_habits()
-    for ind, habit in enumerate(habits):
-        text += f'{ind}. {habit.title}\n'
-    await message.answer(text)
+    try:
+        habits = await get_habits()
+        for ind, habit in enumerate(habits):
+            text += f'{ind + 1}. {habit.title}\n'
+        await message.answer(text)
+    except Exception as e:
+        print(e)
