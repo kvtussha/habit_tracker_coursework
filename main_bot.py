@@ -1,7 +1,6 @@
 import os
 
 import django
-from django.conf import settings
 
 import asyncio
 import logging

@@ -5,7 +5,7 @@ import bot.keyboards as kb
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 
-from bot.utils import get_habits
+from bot.utils import send_all_habits, delete_habit_help
 
 router = Router()
 
@@ -50,11 +50,29 @@ async def command_start_handler(message: Message) -> None:
 
 @router.message(F.text == 'Посмотреть привычки')
 async def all_habits(message: Message) -> None:
-    text = 'Ваши привычки 💫:\n'
     try:
-        habits = await get_habits()
-        for ind, habit in enumerate(habits):
-            text += f'{ind + 1}. {habit.title}\n'
-        await message.answer(text)
+        await send_all_habits(message)
     except Exception as e:
         print(e)
+
+
+class Delete(StatesGroup):
+    habit_number = State()
+
+
+@router.message(F.text == 'Удалить привычку')
+async def delete_habit(message: Message, state: FSMContext) -> None:
+    text = 'Напишите номер привычки, которую хотите удалить 📌:'
+    await message.answer(text)
+    await send_all_habits(message)
+    await state.set_state(Delete.habit_number)
+
+
+@router.message(Delete.habit_number)
+async def delete_habit_number(message: Message, state: FSMContext) -> None:
+    await state.update_data(habit_number=message.text)
+    data = await state.get_data()
+    await message.answer(f'{data}')
+    habit_id = int(data["habit_number"])
+    await delete_habit_help(message, habit_id)
+

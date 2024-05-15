@@ -3,7 +3,6 @@ from asgiref.sync import sync_to_async
 from habit.models import Habit
 from habit.paginators import HabitPaginator
 from habit.serializers import HabitSerializer
-from django.apps import apps
 
 
 class HabitListAPIView(generics.ListAPIView):
@@ -11,11 +10,10 @@ class HabitListAPIView(generics.ListAPIView):
     queryset = Habit.objects.all()
     pagination_class = HabitPaginator
 
-    @staticmethod
     @sync_to_async
-    def get_all_habits():
-        habit = apps.get_model('habit', 'Habit')
-        return list(habit.objects.all())
+    def get_all_habits(self):
+        queryset = self.get_queryset()
+        return list(queryset)
 
 
 class HabitCreateAPIView(generics.CreateAPIView):
@@ -43,3 +41,9 @@ class HabitUpdateAPIView(generics.UpdateAPIView):
 
 class HabitDestroyAPIView(generics.DestroyAPIView):
     queryset = Habit.objects.all()
+    serializer_class = HabitSerializer
+
+    @sync_to_async
+    def perform_destroy(self, habit_id):
+        habit = Habit.objects.get(id=habit_id)
+        habit.delete()
