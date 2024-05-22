@@ -12,7 +12,7 @@ class HabitListAPIView(generics.ListAPIView):
 
     @sync_to_async
     def get_all_habits(self):
-        queryset = self.get_queryset()
+        queryset = Habit.objects.all()
         return list(queryset)
 
 
@@ -27,6 +27,12 @@ class HabitCreateAPIView(generics.CreateAPIView):
 class HabitRetrieveAPIView(generics.RetrieveAPIView):
     serializer_class = HabitSerializer
     queryset = Habit.objects.all()
+
+    @staticmethod
+    @sync_to_async
+    def perform_retrieve(habit_id):
+        habit = Habit.objects.get(id=habit_id)
+        return habit
 
 
 class HabitUpdateAPIView(generics.UpdateAPIView):

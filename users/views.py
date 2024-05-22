@@ -1,47 +1,33 @@
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets
-from rest_framework.filters import OrderingFilter
-from rest_framework.generics import ListAPIView, CreateAPIView
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
+import random
+import string
 
-from users.models import Payment, User
-from users.serializers import PaymentSerializer, UsersSerializer
-from users.services import get_pay
+from rest_framework import generics
+from users.models import User
+from users.serializers import UsersSerializer
+from asgiref.sync import sync_to_async
 
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserListAPIView(generics.ListAPIView):
     serializer_class = UsersSerializer
     queryset = User.objects.all()
 
+    @sync_to_async
+    def get_all_bot_ids(self):
+        users = list(self.get_queryset())
+        ids = []
+        for user in users:
+            ids.append(user.bot_id)
+        return ids
 
-class PaymentListAPIView(ListAPIView):
-    serializer_class = PaymentSerializer
-    queryset = Payment.objects.all()
-    filter_backends = [DjangoFilterBackend, OrderingFilter]
-    filterset_fields = ('paid_course', 'paid_lesson', 'payment_method')
-    ordering_fields = ('payment_date',)
 
+class UserCreateAPIView(generics.CreateAPIView):
+    serializer_class = UsersSerializer
+    queryset = User.objects.all()
 
-class PaymentCreateAPIView(CreateAPIView):
-    serializer_class = PaymentSerializer
-    queryset = Payment.objects.all()
-    permission_classes = [IsAuthenticated]
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        amount = serializer.validated_data.get('amount')
-        method = serializer.validated_data.get('payment_method_choices')
-
-        user = self.request.user
-        payment = get_pay(amount, user)
-        response_data = {
-            "id": payment.id,
-            "amount": payment.amount_payment,
-            "payment_method": method,
-            "stripe": payment.stripe_id
-        }
-        return Response(response_data)
+    @staticmethod
+    @sync_to_async
+    def create_user(username, phone, bot_id):
+        characters = string.ascii_letters + string.digits
+        password = ''.join(random.choice(characters) for _ in range(8))
+        User.objects.create(username=username, phone=phone, bot_id=bot_id, password=password)
 

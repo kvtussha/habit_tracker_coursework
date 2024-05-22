@@ -6,6 +6,7 @@ class User(AbstractUser):
     username = models.CharField(max_length=100, verbose_name='Имя пользователя')
     phone = models.CharField(max_length=35, verbose_name='Номер телефона', null=True, blank=True)
     bot_id = models.BigIntegerField(verbose_name='Телеграмм id пользователя', unique=True)
+    password = models.CharField(max_length=256, verbose_name='Пароль')
 
     USERNAME_FIELD = 'bot_id'
     REQUIRED_FIELDS = []
