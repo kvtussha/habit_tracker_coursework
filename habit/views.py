@@ -3,6 +3,7 @@ from asgiref.sync import sync_to_async
 from habit.models import Habit
 from habit.paginators import HabitPaginator
 from habit.serializers import HabitSerializer
+from users.models import User
 
 
 class HabitListAPIView(generics.ListAPIView):
@@ -15,13 +16,19 @@ class HabitListAPIView(generics.ListAPIView):
         queryset = Habit.objects.all()
         return list(queryset)
 
+    @sync_to_async
+    def get_all_user_habits(self, user_tg_id):
+        user = User.objects.get(bot_id=user_tg_id)
+        queryset = Habit.objects.filter(user=user)
+        return list(queryset)
+
 
 class HabitCreateAPIView(generics.CreateAPIView):
     queryset = Habit.objects.all()
     serializer_class = HabitSerializer
 
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
+    def post(self, *args, **kwargs):
+        return self.create(*args, **kwargs)
 
 
 class HabitRetrieveAPIView(generics.RetrieveAPIView):

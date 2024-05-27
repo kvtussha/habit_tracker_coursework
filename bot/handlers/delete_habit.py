@@ -1,7 +1,7 @@
 from aiogram import Router, F
 from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
-from bot.utils import delete_habit_help, send_all_habits
+from bot.utils import delete_habit_help, send_all_habits, send_all_users_habits
 from bot.states import HabitNumber
 
 delete_habit_router = Router()
@@ -11,7 +11,8 @@ delete_habit_router = Router()
 async def delete_habit(message: Message, state: FSMContext) -> None:
     text = 'Напишите номер привычки, которую хотите удалить 📌:'
     await message.answer(text)
-    await send_all_habits(message)
+    tg_id = message.from_user.id
+    await send_all_users_habits(message, tg_id)
     await state.set_state(HabitNumber.delete)
 
 

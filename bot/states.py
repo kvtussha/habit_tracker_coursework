@@ -32,6 +32,7 @@ class CreateHabit(StatesGroup):
 class UpdateHabit(StatesGroup):
     habit_number = State()
     habit_field_num = State()
+    field_name = State()
 
 
 class HabitNumber(StatesGroup):

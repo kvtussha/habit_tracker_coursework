@@ -2,12 +2,13 @@ import tracemalloc
 
 from aiogram import Router, F
 from aiogram.filters import CommandStart
-from aiogram.types import Message
 import bot.keyboards as kb
 from aiogram.fsm.context import FSMContext
 
-from bot.utils import auth_user, create_user, user_info
+from bot.utils import auth_user, create_user
 from bot.states import Register, UserState
+from aiogram.types import Message, CallbackQuery
+
 
 user_router = Router()
 tracemalloc.start()
@@ -25,28 +26,28 @@ async def command_start_handler(message: Message, state: FSMContext) -> None:
 
 
 @user_router.callback_query(F.data == 'authorisation')
-async def auth_user_id(message: Message, state: FSMContext) -> None:
+async def auth_user_id(callback_query: CallbackQuery, state: FSMContext) -> None:
     await state.set_state(UserState.auth)
-    await message.answer('Отправьте, пожалуйста, Ваши контактные данные для авторизации:\n',
-                         reply_markup=kb.get_number)
+    await callback_query.message.answer('Отправьте, пожалуйста, Ваши контактные данные для авторизации:\n',
+                                        reply_markup=kb.get_number)
 
 
-# @user_router.message(UserState.auth, F.contact)
-# async def auth(message: Message, state: FSMContext) -> None:
-#     await state.update_data(bot_id=message.contact.user_id)
-#     await message.answer('Подождите, происходит авторизация 🍊')
-#     data = await state.get_data()
-#     user_id = data["bot_id"]
-#     ids = await auth_user()
-#     if user_id in ids:
-#         await message.answer('Спасибо, авторизация прошла успешно 💥!')
-#         await message.answer('Теперь Вы можете пользоваться нашим сервисом 🔥 '
-#                              'У Вас появилось меню для просмотра, создания, обновления и удаления привычек',
-#                              reply_markup=kb.main)
-#     else:
-#         await message.answer('К сожалению, аутентификация не удалась. '
-#                              'Вам нужно зарегистрироваться на нашем сервисе 🥑')
-#         await message.answer('Выберите команду 💫:\n', reply_markup=kb.authorisation)
+@user_router.message(UserState.auth, F.contact)
+async def auth(message: Message, state: FSMContext) -> None:
+    await state.update_data(bot_id=message.contact.user_id)
+    await message.answer('Подождите, происходит авторизация 🍊')
+    data = await state.get_data()
+    user_id = data["bot_id"]
+    ids = await auth_user()
+    if user_id in ids:
+        await message.answer('Спасибо, авторизация прошла успешно 💥!')
+        await message.answer('Теперь Вы можете пользоваться нашим сервисом 🔥 '
+                             'У Вас появилось меню для просмотра, создания, обновления и удаления привычек',
+                             reply_markup=kb.main)
+    else:
+        await message.answer('К сожалению, аутентификация не удалась. '
+                             'Вам нужно зарегистрироваться на нашем сервисе 🥑')
+        await message.answer('Выберите команду 💫:\n', reply_markup=kb.authorisation)
 
 
 @user_router.callback_query(F.data == 'register')

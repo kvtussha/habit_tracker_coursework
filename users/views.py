@@ -20,6 +20,17 @@ class UserListAPIView(generics.ListAPIView):
         return ids
 
 
+class UserRetrieveAPIView(generics.RetrieveAPIView):
+    serializer_class = UsersSerializer
+    queryset = User.objects.all()
+
+    @staticmethod
+    @sync_to_async
+    def perform_retrieve(user_id):
+        user = User.objects.get(bot_id=user_id)
+        return user
+
+
 class UserCreateAPIView(generics.CreateAPIView):
     serializer_class = UsersSerializer
     queryset = User.objects.all()

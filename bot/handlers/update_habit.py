@@ -32,8 +32,18 @@ async def update_habit2(message: Message, state: FSMContext) -> None:
 
 
 @update_habit_router.message(UpdateHabit.habit_field_num)
-async def update_habit2(message: Message, state: FSMContext) -> None:
+async def update_habit3(message: Message, state: FSMContext) -> None:
     await state.update_data(habit_field_num=message.text)
     data = await state.get_data()
     if data["habit_field_num"] == '1':
         await message.answer('Введите новое название привычки')
+    await state.set_state(UpdateHabit.field_name)
+
+
+@update_habit_router.message(UpdateHabit.field_name)
+async def update_habit4(message: Message, state: FSMContext) -> None:
+    await state.update_data(field_name=message.text)
+
+
+
+

@@ -1,7 +1,7 @@
 from aiogram import Router, F
 from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
-from bot.utils import retrieve_habit_help, send_all_habits
+from bot.utils import retrieve_habit_help, send_all_habits, send_all_users_habits
 from bot.states import HabitNumber
 
 get_habits_router = Router()
@@ -15,10 +15,11 @@ async def all_users_habits(message: Message) -> None:
         print(e)
 
 
-@get_habits_router.message(F.text == 'Посмотреть привычки')
+@get_habits_router.message(F.text == 'Посмотреть свои привычки')
 async def all_habits(message: Message) -> None:
+    tg_id = message.from_user.id
     try:
-        await send_all_habits(message)
+        await send_all_users_habits(message, tg_id)
     except Exception as e:
         print(e)
 
