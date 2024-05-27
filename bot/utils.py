@@ -32,21 +32,7 @@ async def get_one_habit(habit_id):
     """ Получение одной привычки """
     from habit.views import HabitRetrieveAPIView
     habit = await HabitRetrieveAPIView().perform_retrieve(habit_id)
-    habit_dict = {
-        'id': habit.id,
-        'user': habit.user_id,
-        'title': habit.title,
-        'place': habit.place,
-        'time': habit.time.strftime('%H:%M:%S'),
-        'action': habit.action,
-        'is_pleasant_habit': habit.is_pleasant_habit,
-        'related_habit': habit.related_habit_id,
-        'frequency': habit.frequency,
-        'reward': habit.reward,
-        'time_to_complete': habit.time_to_complete,
-        'is_public': habit.is_public
-    }
-    return habit_dict
+    return habit
 
 
 async def retrieve_habit_help(message, habit_id):
@@ -66,9 +52,14 @@ async def retrieve_habit_help(message, habit_id):
     await message.answer(f'Вот Ваша информация о привычке 🌼: \n\n{text}')
 
 
-async def create_habit(*args, **kwargs):
-    from habit.views import HabitCreateAPIView
-    await HabitCreateAPIView().post(*args, **kwargs)
+# async def create_habit(*args, **kwargs):
+#     from habit.views import HabitCreateAPIView
+#     await HabitCreateAPIView().post(*args, **kwargs)
+async def create_habit(**kwargs):
+    from habit.models import Habit
+    habit = Habit(**kwargs)
+    habit.save()
+    return habit
 
 
 async def send_all_habits(message: Message):

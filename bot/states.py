@@ -15,6 +15,18 @@ class Register(StatesGroup):
 
 
 class CreateHabit(StatesGroup):
+    # title = State()
+    # place = State()
+    # time = State()
+    # action = State()
+    # is_pleasant_habit = State()
+    # related_habit = State()
+    # frequency = State()
+    # reward = State()
+    # time_to_complete = State()
+    # is_public = State()
+    #
+    # completion = State()
     title = State()
     place = State()
     time = State()
@@ -25,14 +37,23 @@ class CreateHabit(StatesGroup):
     reward = State()
     time_to_complete = State()
     is_public = State()
-
-    completion = State()
+    confirmation = State()
 
 
 class UpdateHabit(StatesGroup):
-    habit_number = State()
-    habit_field_num = State()
-    field_name = State()
+    select_habit = State()
+    title = State()
+    place = State()
+    time = State()
+    action = State()
+    is_pleasant_habit = State()
+    is_useful_habit = State()
+    related_habit = State()
+    frequency = State()
+    reward = State()
+    time_to_complete = State()
+    is_public = State()
+    confirmation = State()
 
 
 class HabitNumber(StatesGroup):

@@ -1,10 +1,19 @@
+# habit/management/commands/start_celery.py
+import subprocess
+import os
 from django.core.management.base import BaseCommand
-
-from habit.tasks import habits_reminder
 
 
 class Command(BaseCommand):
-    help = 'Run habit reminder task'
+    help = 'Start Celery worker and beat'
 
     def handle(self, *args, **options):
-        habits_reminder()
+        celery_worker_command = ['celery', '-A', 'config', 'worker', '-B', '--loglevel=info']
+
+        self.stdout.write(self.style.SUCCESS('Starting Celery worker and beat...'))
+
+        try:
+            # Запуск команды Celery worker и beat
+            subprocess.run(celery_worker_command, check=True)
+        except subprocess.CalledProcessError as e:
+            self.stderr.write(self.style.ERROR(f'Error starting Celery: {e}'))

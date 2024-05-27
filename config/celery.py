@@ -13,4 +13,8 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'users.tasks.check_activity',
         'schedule': timedelta(minutes=1),
     },
+    'habits_reminder': {
+            'task': 'habit.tasks.habits_reminder',
+            'schedule': timedelta(minutes=1),
+        },
 }
