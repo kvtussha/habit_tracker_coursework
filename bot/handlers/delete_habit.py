@@ -1,7 +1,7 @@
 from aiogram import Router, F
 from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
-from bot.utils import delete_habit_help, send_all_habits, send_all_users_habits
+from bot.utils import delete_habit_help, send_all_users_habits
 from bot.states import HabitNumber
 
 delete_habit_router = Router()

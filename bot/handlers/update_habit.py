@@ -13,7 +13,7 @@ update_habit_router = Router()
 @update_habit_router.message(F.text == 'Обновить привычку')
 async def update_habit_start(message: Message, state: FSMContext) -> None:
     tg_id = message.from_user.id
-    await message.answer(f"Напишите, пожалуйста, номер привычки, которую хотите обновить")
+    await message.answer("Напишите, пожалуйста, номер привычки, которую хотите обновить")
     await send_all_users_habits(message, tg_id)
     await state.set_state(UpdateHabit.select_habit)
 

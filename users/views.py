@@ -41,4 +41,3 @@ class UserCreateAPIView(generics.CreateAPIView):
         characters = string.ascii_letters + string.digits
         password = ''.join(random.choice(characters) for _ in range(8))
         User.objects.create(username=username, phone=phone, bot_id=bot_id, password=password)
-
