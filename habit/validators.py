@@ -4,17 +4,20 @@ from django.utils import timezone
 
 class OnlyOneFieldValidator:
     def __call__(self, instance):
-        if instance.reward and instance.related_habit:
-            raise ValidationError("Только одно из полей 'вознаграждение' и 'связанная привычка' может быть заполнено.")
+        if instance.is_pleasant_habit:
+            if instance.related_habit:
+                raise ValidationError("Поле 'связанная привычка' не может быть заполнено.")
+            if instance.reward:
+                raise ValidationError("Поле 'вознаграждение' не может быть заполнено.")
 
 
-class PleasantHabitValidator:
+class RelatedHabitValidator:
     def __call__(self, instance):
-        if instance.related_habit and not instance.related_habit.is_pleasant:
+        if not instance.is_pleasant_habit:
             raise ValidationError("Связанная привычка может быть указана только для приятных привычек.")
 
 
-class NoRewardForPleasantHabitValidator:
+class PleasantHabitValidator:
     def __call__(self, instance):
         if instance.related_habit and instance.related_habit.is_pleasant:
             if instance.reward or instance.related_habit:
@@ -23,13 +26,5 @@ class NoRewardForPleasantHabitValidator:
 
 class FrequencyValidator:
     def __call__(self, instance):
-        if instance.frequency_days < 1 or instance.frequency_days > 7:
+        if instance.frequency < 1 or instance.frequency > 7:
             raise ValidationError("Частота выполнения привычки должна быть от 1 до 7 дней.")
-
-
-class LastPerformedValidator:
-    def __call__(self, instance):
-        if instance.last_performed:
-            time_since_last_completed = timezone.now() - instance.last_performed
-            if time_since_last_completed.days > 7:
-                raise ValidationError("Привычка должна быть выполнена хотя бы один раз в течение 7 дней.")

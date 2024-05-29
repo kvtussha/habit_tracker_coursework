@@ -1,7 +1,7 @@
 from django.db import models
 from config.settings import AUTH_USER_MODEL
-from habit.validators import OnlyOneFieldValidator, PleasantHabitValidator, NoRewardForPleasantHabitValidator, \
-    FrequencyValidator, LastPerformedValidator
+from habit.validators import OnlyOneFieldValidator, PleasantHabitValidator, \
+    FrequencyValidator, RelatedHabitValidator
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 
@@ -30,7 +30,7 @@ class Habit(models.Model):
     is_useful_habit = models.BooleanField(default=True, verbose_name='Признак полезной привычки')
     related_habit = models.ForeignKey('self', on_delete=models.CASCADE, **NULLABLE,
                                       verbose_name='Связанная привычка', default=None)
-    frequency = models.IntegerField(default=1, verbose_name='Периодичность (в днях)')
+    frequency = models.IntegerField(default=1, verbose_name='Периодичность (сколько раз в неделю)')
     reward = models.CharField(max_length=200, verbose_name='Вознаграждение')
     time_to_complete = models.IntegerField(verbose_name='Время на выполнение (в минутах)',
                                            validators=[MinValueValidator(1), MaxValueValidator(120)])
@@ -39,10 +39,9 @@ class Habit(models.Model):
 
     def clean(self):
         OnlyOneFieldValidator()(self)
+        RelatedHabitValidator()(self)
         PleasantHabitValidator()(self)
-        NoRewardForPleasantHabitValidator()(self)
         FrequencyValidator()(self)
-        LastPerformedValidator()(self)
 
     def save(self, *args, **kwargs):
         self.clean()

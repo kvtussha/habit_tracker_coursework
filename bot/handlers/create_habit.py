@@ -100,17 +100,18 @@ async def finishing_create_habit(message: Message, state: FSMContext) -> None:
         id_related_habit = data['related_habit']
         related_habit_ = await get_one_habit(id_related_habit)
     data["related_habit"] = related_habit_
-    await create_habit(user=user,
-                       title=data['title'],
-                       place=data['place'],
-                       time=data['time'],
-                       action=data['action'],
-                       is_pleasant_habit=data['is_pleasant_habit'],
-                       related_habit=related_habit_,
-                       frequency=data['frequency'],
-                       reward=data['reward'],
-                       time_to_complete=data['time_to_complete'],
-                       is_public=data['is_public'])
+    await create_habit(
+        user=user,
+        title=data['title'],
+        place=data['place'],
+        time=data['time'],
+        action=data['action'],
+        is_pleasant_habit=data['is_pleasant_habit'],
+        related_habit=related_habit_,
+        frequency=data['frequency'],
+        reward=data['reward'],
+        time_to_complete=data['time_to_complete'],
+        is_public=data['is_public'])
 
     await message.answer('Привычка успешно создана! Посмотрите полный список привычек')
     await state.clear()
