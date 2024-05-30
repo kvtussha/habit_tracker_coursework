@@ -10,8 +10,8 @@ async def auth_user():
 
 async def get_one_user(user_id: int):
     """ Получение пользователя по его id """
-    from users.views import UserRetrieveAPIView
-    user = await UserRetrieveAPIView().perform_retrieve(user_id)
+    from users.models import User
+    user = User.objects.get(bot_id=user_id)
     return user
 
 
@@ -52,9 +52,6 @@ async def retrieve_habit_help(message, habit_id):
     await message.answer(f'Вот Ваша информация о привычке 🌼: \n\n{text}')
 
 
-# async def create_habit(*args, **kwargs):
-#     from habit.views import HabitCreateAPIView
-#     await HabitCreateAPIView().post(*args, **kwargs)
 async def create_habit(**kwargs):
     from habit.models import Habit
     habit = Habit(**kwargs)

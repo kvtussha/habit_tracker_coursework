@@ -1,7 +1,7 @@
 from rest_framework import generics
 from asgiref.sync import sync_to_async
 
-from habit.management.commands import habits_reminder
+from habit.tasks import habits_reminder
 from habit.models import Habit
 from habit.paginators import HabitPaginator
 from habit.serializers import HabitSerializer
@@ -49,8 +49,22 @@ class HabitUpdateAPIView(generics.UpdateAPIView):
     queryset = Habit.objects.all()
 
     def perform_update(self, serializer):
-        # Вызываем задачу Celery для отправки уведомлений об обновлении курса
-        habits_reminder.apply_async(countdown=5)
+        instance = serializer.save()
+        obj = {
+            "user": instance.user.id,
+            "title": instance.title,
+            "place": instance.place,
+            "time": instance.time.strftime('%H:%M'),
+            "action": instance.action,
+            "is_pleasant_habit": instance.is_pleasant_habit,
+            "is_useful_habit": instance.is_useful_habit,
+            "related_habit": instance.related_habit.id if instance.related_habit else None,
+            "frequency": instance.frequency,
+            "reward": instance.reward,
+            "time_to_complete": instance.time_to_complete,
+            "is_public": instance.is_public,
+        }
+        habits_reminder.delay(obj)
 
 
 class HabitDestroyAPIView(generics.DestroyAPIView):

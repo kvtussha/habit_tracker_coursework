@@ -3,6 +3,9 @@ from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 from bot.states import CreateHabit
 from bot.utils import get_one_user, get_one_habit, send_all_users_habits
+from django.core.exceptions import ValidationError
+
+from habit.validators import OnlyOneFieldValidator, RelatedHabitValidator, PleasantHabitValidator, FrequencyValidator
 
 create_habit_router = Router()
 
@@ -25,7 +28,7 @@ async def habit_title(message: Message, state: FSMContext) -> None:
 @create_habit_router.message(CreateHabit.place)
 async def habit_place(message: Message, state: FSMContext) -> None:
     await state.update_data(place=message.text)
-    await message.answer('Время выполнения привычки в формате 12:00:00')
+    await message.answer('Время выполнения привычки в формате 12:00')
     await state.set_state(CreateHabit.time)
 
 
